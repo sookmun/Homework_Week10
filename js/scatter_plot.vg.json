@@ -53,7 +53,8 @@
       }
     ],
     "transform": [
-        {"filter": "Regional_Selection == null || datum.Regional_indicator == Regional_Selection"}
+        {"filter": "Regional_Selection == null || datum.Regional_indicator == Regional_Selection"},
+        {"filter": "datum.Logged_GDP_per_capita> GDP"}
         
       ],
     "encoding": {

@@ -4,69 +4,71 @@
     "height": 600,
     "title": "Countries GDP",
     "data": {
-      "url": "https://raw.githubusercontent.com/sookmun/FIT3179_Week9_Homework/main/js/week9.topojson"
+      "url": "https://raw.githubusercontent.com/sookmun/Homework_Week10/main/Data/2020.csv"
     },
     "params": [
       {
-        "name": "Population_Above",
+        "name": "GDP",
         "value": 0,
         "bind": {
           "input": "range",
           "min": 0,
-          "max": 100000000,
-          "step": 1000000,
-          "name": "Minimum Population: "
+          "max": 12,
+          "step": 0.2,
+          "name": "Minimum GDP per capita: "
         }
       },
       {
-        "name": "Continent_selection",
+        "name": "Regional_Selection",
         "bind": {
           "input": "select",
           "options": [
             null,
-            "North America",
-            "South America",
-            "Europe",
-            "Africa",
-            "Asia",
-            "Oceania"
+            "Western Europe",
+            "North America and ANZ",
+            "Middle East and North Africa",
+            "Latin America and Caribbean",
+            "Central and Eastern Europe",
+            "East Asia",
+            "Southeast Asia",
+            "Commonwealth of Independent States",
+            "Sub-Saharan Africa",
+            "South Asia"
           ],
           "labels":[
             "Show All",
-            "North America",
-            "South America",
-            "Europe",
-            "Africa",
-            "Asia",
-            "Oceania"
+            "Western Europe",
+            "North America and ANZ",
+            "Middle East and North Africa",
+            "Latin America and Caribbean",
+            "Central and Eastern Europe",
+            "East Asia",
+            "Southeast Asia",
+            "Commonwealth of Independent States",
+            "Sub-Saharan Africa",
+            "South Asia"
           ],
-          "name": "Continent Selection: "
+          "name": "Regional Selection: "
         }
       }
     ],
     "transform": [
-      {"filter": "datum.Active > 0"},
-      {"filter": "datum.Deaths > 0"},
-      {"filter": "datum.Population > Population_Above"},
-      {"filter": "Continent_selection == null || datum.Continent == Continent_selection"},
-      {
-        "calculate": "datum.Confirmed/datum.Population * 10000",
-        "as": "Cases per 10,000 Population"
-      }
-    ],
+        {"filter": "Regional_Selection == null || datum.Regional_indicator == Regional_Selection"}
+        
+      ],
     "encoding": {
       "x": {
-        "field": "Confirmed",
+        "field": "Ladder score",
         "type": "quantitative",
-        "title": "Confirmed Cases",
-        "axis": {"tickCount": 7},
-        "scale": {"type": "log", "domain": [1, 10000000]}
+        "title": "Hapiness",
+        "axis": {"tickCount": 7}
+        
       },
       "y": {
-        "field": "Deaths",
+        "field": "Generosity",
         "type": "quantitative",
-        "axis": {"tickCount": 6},
-        "scale": {"type": "log", "domain": [1, 1000000]}
+        "axis": {"tickCount": 7}
+        
       }
     },
     "layer": [
@@ -74,41 +76,49 @@
         "selection": {
           "continent_highlight": {
             "type": "multi",
-            "fields": ["Continent"],
+            "fields": ["Regional_indicator"],
             "bind": "legend"
           }
         },
         "mark": "circle",
         "encoding": {
           "size": {
-            "field": "Population",
+            "field": "Logged GDP per capita",
             "type": "quantitative",
             "scale": {
               "type": "threshold",
-              "domain": [1000000, 10000000, 50000000, 100000000, 500000000],
+              "domain": [2, 3, 6, 8, 10, 12],
               "range": [10, 50, 150, 200, 300, 400]
             },
             "legend": {"format": ".1s"}
           },
           "color": {
-            "field": "Continent",
+            "field": "Regional_indicator",
             "type": "nominal",
             "scale": {
               "domain": [
-                "North America",
-                "South America",
-                "Europe",
-                "Africa",
-                "Asia",
-                "Oceania"
+                "Western Europe",
+                "North America and ANZ",
+                "Middle East and North Africa",
+                "Latin America and Caribbean",
+                "Central and Eastern Europe",
+                "East Asia",
+                "Southeast Asia",
+                "Commonwealth of Independent States",
+                "Sub-Saharan Africa",
+                "South Asia"
               ],
               "range": [
-                "#e41a1c",
-                "#984ea3",
-                "#ff7f00",
                 "#a6cee3",
-                "#377eb8",
-                "#a65628"
+                "#1f78b4",
+                "#b2df8a",
+                "#33a02c",
+                "#fb9a99",
+                "#e31a1c",
+                "#fdbf6f",
+                "#ff7f00",
+                "#cab2d6",
+                "#6a3d9a"
               ]
             }
           },
@@ -117,16 +127,11 @@
             "value": 0.2
           },
           "tooltip": [
-            {"field": "Country", "type": "nominal"},
-            {"field": "Confirmed", "type": "quantitative", "format": ","},
-            {"field": "Active", "type": "quantitative", "format": ","},
-            {"field": "Deaths", "type": "quantitative", "format": ","},
-            {"field": "Recovered", "type": "quantitative", "format": ","},
-            {
-              "field": "Cases per 10,000 Population",
-              "type": "quantitative",
-              "format": ".2f"
-            }
+            {"field": "Country name", "type": "nominal"},
+            {"field": "Regional_indicator", "type": "nominal"},
+            {"field": "Ladder score", "type": "quantitative", "format": ","},
+            {"field": "Logged GDP per capita", "type": "quantitative", "format": ","},
+            {"field": "Generosity", "type": "quantitative", "format": ","}            
           ]
         }
       },
@@ -140,26 +145,21 @@
           "fontStyle": "italic"
         },
         "encoding": {
-          "text": {"field": "Country", "type": "nominal"},
+          "text": {"field": "Country name", "type": "nominal"},
           "color": {"value": "black"},
           "opacity": {
             "condition": {
-              "test": "datum['Country'] == 'China' || datum['Country'] == 'Singapore' || datum['Country'] == 'Australia' || datum['Country'] == 'New Zealand' || datum['Country'] == 'Italy' || datum['Country'] == 'Yemen' ||  datum['Country'] == 'United States'",
+              "test": "datum['Country name'] == 'China' || datum['Country name'] == 'Singapore' || datum['Country name'] == 'United States' || datum['Country name'] == 'New Zealand' || datum['Country name'] == 'Italy'",
               "value": 1
             },
             "value": 0
           },
           "tooltip": [
-            {"field": "Country", "type": "nominal"},
-            {"field": "Confirmed", "type": "quantitative", "format": ","},
-            {"field": "Active", "type": "quantitative", "format": ","},
-            {"field": "Deaths", "type": "quantitative", "format": ","},
-            {"field": "Recovered", "type": "quantitative", "format": ","},
-            {
-              "field": "Cases per 10,000 Population",
-              "type": "quantitative",
-              "format": ".2f"
-            }
+            {"field": "Country name", "type": "nominal"},
+            {"field": "Regional_indicator", "type": "nominal"},
+            {"field": "Ladder score", "type": "quantitative", "format": ","},
+            {"field": "Logged GDP per capita", "type": "quantitative", "format": ","},
+            {"field": "Generosity", "type": "quantitative", "format": ","}            
           ]
         }
       }
